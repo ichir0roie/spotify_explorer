@@ -19,9 +19,15 @@ def load_items() -> list[spotify_model.TrackItem]:
     return items
 
 
-def add_play_list(
-    playlist_id: str,
-    item: spotify_model.TrackItem
+def insert_all_tracks(
+    target_playlist_id: str,
 ):
 
-    pass
+    items = load_items()
+    for r in range(len(items))[::50]:
+        print(r)
+        spotify_api.playlists_tracks_post(
+            target_playlist_id,
+            items[r:r+50]
+        )
+        time.sleep(0.5)

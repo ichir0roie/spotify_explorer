@@ -13,7 +13,6 @@ __out_dir_base = "out/reponse"
 
 def __get_base(
     function_url: str,
-    method: str = "GET",
     headers: dict = {},
     params: dict = {}
 ):
@@ -31,12 +30,42 @@ def __get_base(
     )
     data = response.json()
 
-    out_file = f"{__out_dir_base}/{function_url}"
+    out_file = f"{__out_dir_base}/get/{function_url}"
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
     with open(f"{out_file}.json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
     # print(data)
     return data
+
+
+def __post_base(
+    function_url: str,
+    headers: dict = {},
+    data: dict = {},
+    params: dict = {}
+):
+    url = f"{__endpoint_base}/{function_url}"
+    headers = {
+        "Authorization": "Bearer {access_token}".format(access_token=my_token.access_token),
+        "Content-Type": "application/json",
+    }
+    headers.update(
+        headers
+    )
+    response = requests.post(
+        url=url,
+        headers=headers,
+        data=data,
+        params=params
+    )
+    res = response.json()
+
+    out_file = f"{__out_dir_base}/post/{function_url}"
+    os.makedirs(os.path.dirname(out_file), exist_ok=True)
+    with open(f"{out_file}.json", "w", encoding="utf-8") as f:
+        json.dump(res, f, indent=2)
+    # print(data)
+    return res
 
 
 def users_playlists(
@@ -76,3 +105,23 @@ def search(
         }
     )
     return spotify_model.Search(res)
+
+
+def playlists_tracks_post(
+    playlist_id: str,
+    track_items: list[spotify_model.TrackItem]
+):
+    track_uris = []
+    for track_item in track_items:
+        url = f"spotify:track:{track_item.id}"
+        track_uris.append(url)
+    res = __post_base(
+        f"playlists/{playlist_id}/tracks",
+        # data={
+        #     "uris": track_uris
+        # }
+        params={
+            "uris": ",".join(track_uris)
+        }
+    )
+    return res
