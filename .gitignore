@@ -1,2 +1,5 @@
 .env
-scripts
+script
+out
+
+**/__pycache__

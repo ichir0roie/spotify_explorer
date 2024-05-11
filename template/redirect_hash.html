@@ -1,0 +1,11 @@
+<html>
+
+<head>
+    <script>
+        var url = window.location.href;
+        newUrl = url.replace('/callback', '/callback_hash').replace("#", "?");
+        window.location.replace(newUrl);
+    </script>
+</head>
+
+</html>
